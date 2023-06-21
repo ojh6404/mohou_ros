@@ -2,12 +2,13 @@ import os
 import shutil
 
 import pytest
-
 from mohou.file import get_project_path
+
 from mohou_ros_utils.config import Config
 from mohou_ros_utils.file import RelativeName, get_subpath
 
 
+@pytest.fixture(scope="session")
 def example_config():
     project_name = "_mohou_ros_utils_test"
 
