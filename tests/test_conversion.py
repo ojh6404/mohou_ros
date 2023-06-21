@@ -3,15 +3,17 @@ import pickle
 
 import numpy as np
 import pytest
-from mohou.types import AngleVector, GripperState, RGBImage
 from pr2_controllers_msgs.msg import JointControllerState
 from sensor_msgs.msg import CompressedImage, JointState
 from test_config import example_config  # noqa
 
+from mohou.types import AngleVector, GripperState, RGBImage
+from mohou_ros.msg import Float32MultiArrayStamped
 from mohou_ros_utils.conversion import (
     AngleVectorConverter,
     AnotherGripperState,
     DepthImageConverter,
+    FloatVectorConverter,
     GripperStateConverter,
     MessageConverterCollection,
     RGBImageConverter,
@@ -80,6 +82,18 @@ def test_depth_image_converter(example_config):  # type: ignore # noqa
     get_pickle_data_path("depth_image.pkl")
     DepthImageConverter.from_config(config)
     # TODO: add test when you implement DepthImageConverter
+
+
+def test_float_vector_converter(example_config):  # type: ignore # noqa
+    # float vector type
+    config = example_config
+    float_vector: Float32MultiArrayStamped = get_pickle_data_path("float_vector.pkl")
+
+    msg_table = {"/float_vector": float_vector}
+    converter = FloatVectorConverter.from_config(config)
+    fv = converter.apply_to_msg_table(msg_table)  # type: ignore
+    assert fv is not None
+    assert fv.shape == (5,)
 
 
 def test_angle_vector_converter(example_config):  # type: ignore # noqa

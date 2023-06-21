@@ -5,23 +5,26 @@ from typing import Dict, Generic, List, Optional, Type, TypeVar
 import genpy
 import numpy as np
 from cv_bridge import CvBridge
+
+# Only pr2 user
+from pr2_controllers_msgs.msg import JointControllerState
+from sensor_msgs.msg import CompressedImage, Image, JointState
+from std_msgs.msg import Float32MultiArray
+from tunable_filter.tunable import CompositeFilter, CropResizer, ResolutionChangeResizer
+
 from mohou.types import (
     AngleVector,
     AnotherGripperState,
     DepthImage,
     ElementDict,
+    FloatVector,
     GripperState,
     PrimitiveElementBase,
     PrimitiveElementT,
     RGBImage,
 )
 from mohou.utils import get_all_concrete_leaftypes
-
-# Only pr2 user
-from pr2_controllers_msgs.msg import JointControllerState
-from sensor_msgs.msg import CompressedImage, Image, JointState
-from tunable_filter.tunable import CompositeFilter, CropResizer, ResolutionChangeResizer
-
+from mohou_ros.msg import Float32MultiArrayStamped
 from mohou_ros_utils.config import Config
 from mohou_ros_utils.utils import deprecated
 
@@ -253,6 +256,30 @@ class DepthImageConverter(MessageConverter[CompressedImage, DepthImage]):
         image = np.expand_dims(image, axis=2)
         return DepthImage(image)
         """
+
+
+@dataclass
+class FloatVectorConverter(MessageConverter[Float32MultiArrayStamped, FloatVector]):
+    control_joints: List[str]
+    joint_indices: Optional[List[int]] = None
+
+    @classmethod
+    def from_config(cls, config: Config):
+        assert cls.is_compatible(config)
+        topic_name = cls.config_to_topic_name(config)
+        return cls(topic_name, None)  # TODO
+
+    @classmethod
+    def input_message_type(cls) -> Type[Float32MultiArrayStamped]:
+        return Float32MultiArrayStamped
+
+    @classmethod
+    def out_element_type(cls) -> Type[FloatVector]:
+        return FloatVector
+
+    def apply(self, msg: Float32MultiArrayStamped) -> FloatVector:  # type: ignore[override]
+        float_vector = msg.data
+        return FloatVector(np.array(float_vector))
 
 
 @dataclass

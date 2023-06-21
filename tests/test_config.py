@@ -2,13 +2,12 @@ import os
 import shutil
 
 import pytest
-from mohou.file import get_project_path
 
+from mohou.file import get_project_path
 from mohou_ros_utils.config import Config
 from mohou_ros_utils.file import RelativeName, get_subpath
 
 
-@pytest.fixture(scope="session")
 def example_config():
     project_name = "_mohou_ros_utils_test"
 
@@ -33,8 +32,8 @@ def example_config():
 
     config = Config.from_project_path(project_path)
     assert config.project_path.name == project_name
-    assert len(config.topics.topic_config_list) == 5
-    assert len(config.topics.use_topic_list) == 4
+    assert len(config.topics.topic_config_list) == 6
+    assert len(config.topics.use_topic_list) == 5
 
     assert len(config.additional_topics) == 1
 
