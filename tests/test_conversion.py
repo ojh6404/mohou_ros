@@ -122,11 +122,13 @@ def test_gripper_state_converter(example_config):  # type: ignore # noqa
 def test_overall_message_converter(example_config):  # type: ignore # noqa
     config = example_config
     rgb_image_msg: CompressedImage = get_pickle_data_path("rgb_image.pkl")
+    float_vector_msg: Float32MultiArrayStamped = get_pickle_data_path("float_vector.pkl")
     joint_state_msg: JointState = get_pickle_data_path("joint_states.pkl")
     gripper_state_msg = JointControllerState(set_point=1.0)
     gripper_state_msg2 = JointControllerState(set_point=1.0)
     msg_table = {
         "/kinect_head/rgb/image_rect_color": rgb_image_msg,
+        "/float_vector": float_vector_msg,
         "/joint_states": joint_state_msg,
         "/r_gripper_controller/state": gripper_state_msg,
         "/l_gripper_controller/state": gripper_state_msg2,
@@ -137,6 +139,7 @@ def test_overall_message_converter(example_config):  # type: ignore # noqa
 
     assert set(out.keys()) == {RGBImage, AngleVector, GripperState, AnotherGripperState}
     assert out[RGBImage].shape == (112, 112, 3)
+    assert out[FloatVector].shape == (5)
     assert out[AngleVector].shape == (7,)
     assert out[GripperState].shape == (1,)
     assert out[AnotherGripperState].shape == (1,)
