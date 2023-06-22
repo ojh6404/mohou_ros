@@ -260,14 +260,10 @@ class DepthImageConverter(MessageConverter[CompressedImage, DepthImage]):
 
 @dataclass
 class FloatVectorConverter(MessageConverter[Float32MultiArrayStamped, FloatVector]):
-    control_joints: List[str]
-    joint_indices: Optional[List[int]] = None
-
     @classmethod
     def from_config(cls, config: Config):
         assert cls.is_compatible(config)
-        topic_name = cls.config_to_topic_name(config)
-        return cls(topic_name, None)  # TODO
+        return cls.from_config_topic_name_only(config)
 
     @classmethod
     def input_message_type(cls) -> Type[Float32MultiArrayStamped]:
