@@ -4,11 +4,11 @@ from typing import List, Optional
 
 import numpy as np
 import rosbag
-from mohou.types import RGBImage
+from mohou.types import RGBImage, GrayImage
 from moviepy.editor import ImageSequenceClip
 
 from mohou_ros_utils.config import Config
-from mohou_ros_utils.conversion import RGBImageConverter
+from mohou_ros_utils.conversion import RGBImageConverter, GrayImageConverter
 from mohou_ros_utils.file import RelativeName, get_subpath
 from mohou_ros_utils.interpolator import (
     AllSameInterpolationRule,

@@ -22,6 +22,7 @@ from mohou.types import (
     PrimitiveElementBase,
     PrimitiveElementT,
     RGBImage,
+    GrayImage,
 )
 from mohou.utils import get_all_concrete_leaftypes
 from mohou_ros.msg import Float32MultiArrayStamped
@@ -213,6 +214,31 @@ class RGBImageConverter(MessageConverter[CompressedImage, RGBImage]):
         if self.image_filter is not None:
             image = self.image_filter(image)
         return RGBImage(image)
+
+
+@dataclass
+class GrayImageConverter(MessageConverter[CompressedImage, GrayImage]):
+    image_filter: Optional[CompositeFilter] = None
+
+    @classmethod
+    def from_config(cls, config: Config):
+        assert cls.is_compatible(config)
+        topic_name = cls.config_to_topic_name(config)
+        return cls(topic_name, config.image_filter)
+
+    @classmethod
+    def input_message_type(cls) -> Type[CompressedImage]:
+        return CompressedImage
+
+    @classmethod
+    def out_element_type(cls) -> Type[GrayImage]:
+        return GrayImage
+
+    def apply(self, msg: CompressedImage) -> GrayImage:  # type: ignore[override]
+        image = CvBridge().compressed_imgmsg_to_cv2(msg)
+        if self.image_filter is not None:
+            image = self.image_filter(image)
+        return GrayImage(image)
 
 
 @dataclass
