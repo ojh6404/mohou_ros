@@ -17,7 +17,7 @@ def train_and_visualize(
     n_aug_lstm: int = 19,
     valid_ratio: float = 0.1,
 ):
-    cmd_train_vae = "python3 -m mohou.script.train_autoencoder -pp {pp} -n {n} -image RGBImage -latent {n_latent} --vae -bundle_postfix autoencoder -valid-ratio {vr} -aug {aug}".format(
+    cmd_train_vae = "python3 -m mohou.script.train_autoencoder -pp {pp} -n {n} -image GrayImage -latent {n_latent} --vae -bundle_postfix autoencoder -valid-ratio {vr} -aug {aug}".format(
         pp=project_path, n=n_epoch_vae, n_latent=16, vr=valid_ratio, aug=n_aug_vae
     )
     cmd_visualize_vae = "python3 -m mohou.script.visualize_autoencoder_result -pp {pp}".format(
