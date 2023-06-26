@@ -236,6 +236,8 @@ class GrayImageConverter(MessageConverter[CompressedImage, GrayImage]):
 
     def apply(self, msg: CompressedImage) -> GrayImage:  # type: ignore[override]
         image = CvBridge().compressed_imgmsg_to_cv2(msg)
+        assert image.ndim == 2
+        image = image[:, :, np.newaxis]
         if self.image_filter is not None:
             image = self.image_filter(image)
         return GrayImage(image)
