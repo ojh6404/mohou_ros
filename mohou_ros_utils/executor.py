@@ -24,6 +24,7 @@ from mohou.types import (
     ElementDict,
     GripperState,
     RGBImage,
+    GrayImage,
     TerminateFlag,
 )
 from mohou.utils import canvas_to_ndarray
@@ -162,7 +163,8 @@ class ExecutorBase(ABC):
 
             rospy.Subscriber(topic_name, msg_type, f)
 
-        _create_subscriber_if_necessary(RGBImage, CompressedImage)
+        # _create_subscriber_if_necessary(RGBImage, CompressedImage)
+        _create_subscriber_if_necessary(GrayImage, CompressedImage)
         _create_subscriber_if_necessary(GripperState, JointControllerState)
         _create_subscriber_if_necessary(AnotherGripperState, JointControllerState)
         _create_subscriber_if_necessary(AngleVector, JointState)
@@ -189,16 +191,16 @@ class ExecutorBase(ABC):
         self.is_terminatable = edict_next[TerminateFlag].numpy().item() > self.terminate_threthold
 
         # save debug infos
-        robot_camera_view = edict_current[RGBImage]
+        robot_camera_view = edict_current[GrayImage]
 
-        inp = torch.unsqueeze(edict_current[RGBImage].to_tensor(), dim=0)
-        reconstructed = RGBImage.from_tensor(self.autoencoder.forward(inp).squeeze(dim=0))
+        inp = torch.unsqueeze(edict_current[GrayImage].to_tensor(), dim=0)
+        reconstructed = GrayImage.from_tensor(self.autoencoder.forward(inp).squeeze(dim=0))
 
         dimages = DebugImages(
             robot_camera_view,
-            edict_current[RGBImage],
+            edict_current[GrayImage],
             reconstructed,
-            edict_next[RGBImage],
+            edict_next[GrayImage],
         )
         self.debug_images_seq.append(dimages)
         self.edict_seq.append(edict_current)
